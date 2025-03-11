@@ -43,5 +43,5 @@ for y in range(HEIGHT):
         pixels[x, y] = color
 
 # Save and display the image
-img.save("output.png")
+img.save("output1.png")
 img.show()
