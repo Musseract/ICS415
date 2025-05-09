@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bézier Curve Editor with Instructions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: #f0f0f0;
+        }
+        #toolbar {
+            padding: 10px;
+            background: #333;
+            color: white;
+            flex-shrink: 0;
+        }
+        button {
+            margin: 5px;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+        #message {
+            margin: 10px;
+            font-size: 14px;
+            color: #555;
+            height: 20px;
+        }
+        #canvas {
+            flex-grow: 1;
+            display: block;
+            width: 100%;
+            height: 100%;
+            background: white;
+        }
+        footer {
+            padding: 15px;
+            background: #fff;
+            color: #555;
+            border-top: 1px solid #ccc;
+        }
+        footer ul {
+            margin: 0;
+            padding-left: 20px;
+            text-align: left;
+            font-size: 14px;
+        }
+        footer li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="toolbar">
+    <button id="basicMode">Basic Bézier Mode</button>
+    <button id="polyMode">Poly Bézier Mode</button>
+    <button id="addSegment" style="display:none;">Add Segment</button>
+    <button id="removeSegment" style="display:none;">Remove Last</button>
+</div>
+
+<div id="message"></div>
+<canvas id="canvas"></canvas>
+
+<footer>
+    <ul>
+        <li>Select the number of control points using the tabs above.</li>
+        <li>Click on the canvas to add points.</li>
+        <li>Drag points to modify the curve.</li>
+        <li>Press <strong>R</strong> to remove the last point.</li>
+    </ul>
+</footer>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+const basicBtn = document.getElementById('basicMode');
+const polyBtn = document.getElementById('polyMode');
+const addSegmentBtn = document.getElementById('addSegment');
+const removeSegmentBtn = document.getElementById('removeSegment');
+const message = document.getElementById('message');
+
+let mode = 'basic';
+let points = [];
+let draggingPoint = null;
+let placingSegment = false;
+
+// Responsive canvas resizing
+function resizeCanvas() {
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+    draw();
+}
+window.addEventListener('resize', resizeCanvas);
+
+// Create a point object
+function createPoint(x, y, type = 'anchor') {
+    return { x, y, type };
+}
+
+function initBasic() {
+    const width = canvas.width;
+    const height = canvas.height;
+
+    points = [
+        createPoint(width * 0.25, height * 0.5, 'anchor'),
+        createPoint(width * 0.35, height * 0.25, 'control'),
+        createPoint(width * 0.55, height * 0.25, 'control'),
+        createPoint(width * 0.65, height * 0.5, 'anchor')
+    ];
+}
+
+function initPoly() {
+    initBasic();
+}
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (mode === 'basic') {
+        drawCurve(points);
+    } else if (mode === 'poly') {
+        for (let i = 0; i < points.length - 1; i += 3) {
+            drawCurve(points.slice(i, i + 4));
+        }
+    }
+
+    drawPoints();
+}
+
+function drawCurve(pts) {
+    // Control lines
+    ctx.strokeStyle = '#aaa';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    ctx.lineTo(pts[1].x, pts[1].y);
+    ctx.lineTo(pts[2].x, pts[2].y);
+    ctx.lineTo(pts[3].x, pts[3].y);
+    ctx.stroke();
+
+    // Bézier curve
+    ctx.strokeStyle = 'blue';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    ctx.bezierCurveTo(pts[1].x, pts[1].y, pts[2].x, pts[2].y, pts[3].x, pts[3].y);
+    ctx.stroke();
+}
+
+function drawPoints() {
+    points.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 7, 0, Math.PI * 2);
+        ctx.fillStyle = p.type === 'anchor' ? 'red' : 'green';
+        ctx.fill();
+        ctx.strokeStyle = '#333';
+        ctx.stroke();
+    });
+}
+
+function getPointAt(x, y) {
+    return points.find(p => {
+        const dx = p.x - x;
+        const dy = p.y - y;
+        return Math.sqrt(dx*dx + dy*dy) < 10;
+    });
+}
+
+// Mouse events
+canvas.addEventListener('mousedown', e => {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    if (placingSegment) {
+        addNewSegmentAt(x, y);
+        placingSegment = false;
+        message.textContent = '';
+        draw();
+    } else {
+        draggingPoint = getPointAt(x, y);
+    }
+});
+
+canvas.addEventListener('mousemove', e => {
+    if (draggingPoint) {
+        const rect = canvas.getBoundingClientRect();
+        draggingPoint.x = e.clientX - rect.left;
+        draggingPoint.y = e.clientY - rect.top;
+        draw();
+    }
+});
+
+canvas.addEventListener('mouseup', () => {
+    draggingPoint = null;
+});
+
+// Buttons
+basicBtn.onclick = () => {
+    mode = 'basic';
+    addSegmentBtn.style.display = 'none';
+    removeSegmentBtn.style.display = 'none';
+    message.textContent = '';
+    initBasic();
+    draw();
+};
+
+polyBtn.onclick = () => {
+    mode = 'poly';
+    addSegmentBtn.style.display = 'inline-block';
+    removeSegmentBtn.style.display = 'inline-block';
+    message.textContent = '';
+    initPoly();
+    draw();
+};
+
+// New segment at clicked position
+function addNewSegmentAt(x, y) {
+    const scale = 0.5;  // smaller size
+
+    if (points.length >= 4) {
+        const last = points.slice(-1)[0];
+        const distanceX = (x - last.x) * scale;
+        const distanceY = (y - last.y) * scale;
+
+        const newAnchor = createPoint(last.x + distanceX, last.y + distanceY, 'anchor');
+        const cp1 = createPoint(
+            last.x + distanceX * 0.33,
+            last.y + distanceY * 0.33 - 75,
+            'control'
+        );
+        const cp2 = createPoint(
+            last.x + distanceX * 0.66,
+            last.y + distanceY * 0.66 + 75,
+            'control'
+        );
+
+        // G1 continuity: mirror the last control point if exists
+        if (points.length >= 4) {
+            const lastCP = points[points.length - 2];
+            cp1.x = 2 * last.x - lastCP.x;
+            cp1.y = 2 * last.y - lastCP.y;
+        }
+
+        points.push(cp1, cp2, newAnchor);
+    }
+}
+
+addSegmentBtn.onclick = () => {
+    if (mode !== 'poly') return;
+    placingSegment = true;
+    message.textContent = '🖱️ Click on canvas to add segment...';
+};
+
+removeSegmentBtn.onclick = () => {
+    if (points.length > 4) {
+        points.splice(-3, 3);
+        draw();
+    }
+};
+
+// Initial setup
+resizeCanvas();
+initBasic();
+draw();
+
+</script>
+
+</body>
+</html>
