@@ -1,4 +1,4 @@
-# Simple Block World – README
+# Simple Block World - Minecraft
 
 ## Overview
 
