@@ -1,5 +1,8 @@
 # Ray Tracing Project
 
+<img width="358" alt="image" src="https://github.com/user-attachments/assets/46b9504f-012d-4f58-8fd5-a9304685ecac" />
+
+
 ## Introduction & Motivation
 
 This project is a Python implementation of a simple ray tracer based on the book *Ray Tracing in a Weekend* by Peter Shirley. The goal of this project is to create realistic images by simulating the physics of light as it interacts with objects in a virtual environment.
