@@ -24,8 +24,8 @@ Project02/
 ├── ProjectSettings/
 ├── .gitignore
 └── README.md
+```
 ---
-``` 
 ## Getting Started
 
 ### 1. Clone this repository:
