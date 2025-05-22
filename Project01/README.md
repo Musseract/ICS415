@@ -1,6 +1,6 @@
 # Ray Tracing Project
 
-https://raw.githubusercontent.com/Musseract/ICS415/refs/heads/main/Project01/output.png![image](https://github.com/user-attachments/assets/ae2b24e8-7b3a-47a4-9f58-48f0f94abe19)
+![image](https://github.com/user-attachments/assets/963e3d5b-8e13-414f-a81d-8b6e3a1dca45)
 
 
 ## Introduction & Motivation
