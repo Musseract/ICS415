@@ -12,14 +12,18 @@ The goal is to reproduce the visual effect from ShaderToy directly in Unity, by 
 
 Project02/
 ├── Assets/
-│   ├── Shaders/
 │   ├── Scenes/
-│   └── ... (other Unity folders)
+│   │   └── [SampleScene.unity]
+│   ├── Shaders/
+│   │   └── [YourConvertedShader.shader]
+│   ├── Materials/
+│   │   └── [MaterialUsingShader.mat]
+│   └── Scripts/
+│       └── [AnyCSharpScripts.cs]
 ├── Packages/
 ├── ProjectSettings/
 ├── .gitignore
 └── README.md
-
 ---
 
 ## Getting Started
