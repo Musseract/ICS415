@@ -1,6 +1,6 @@
 # Ray Tracing Project
 
-![image](https://github.com/user-attachments/assets/963e3d5b-8e13-414f-a81d-8b6e3a1dca45)
+<img width="358" alt="image" src="https://github.com/user-attachments/assets/46b9504f-012d-4f58-8fd5-a9304685ecac" />
 
 
 ## Introduction & Motivation
