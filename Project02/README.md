@@ -7,8 +7,9 @@ The goal is to reproduce the visual effect from ShaderToy directly in Unity, by 
 
 
 ---
-``` 
+
 ## Folder Structure
+``` 
 Project02/
 ├── Assets/
 │   ├── Scenes/
